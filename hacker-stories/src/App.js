@@ -20,7 +20,7 @@ const list = [
   },
 ];
 
-function App() {
+const App = () => {
 
   return (
     <div>
@@ -36,7 +36,7 @@ function App() {
   );
 }
 
-function List() {
+const List = () => {
   return list.map(item => {
     return (
       <div key={item.objectID}>
