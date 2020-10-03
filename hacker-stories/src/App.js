@@ -21,7 +21,7 @@ const intialStories = [
 ];
 
 const getAsyncStories = () => {
-  return new Promise(resolve =>
+  return new Promise((resolve, error) =>
     setTimeout(
       () => resolve({ data: { stories: intialStories } }),
       2000
@@ -31,7 +31,10 @@ const getAsyncStories = () => {
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
-    localStorage.getItem(key) || initialState);
+    localStorage.getItem(key) || localStorage.getItem(key) === ''
+      ? localStorage.getItem(key)
+      : initialState
+  );
 
   React.useEffect(() => {
     localStorage.setItem(key, value);
@@ -43,11 +46,18 @@ const useSemiPersistentState = (key, initialState) => {
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState('search', 'React');
   const [stories, setStories] = React.useState([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
-    getAsyncStories().then(result => {
-      setStories(result.data.stories);
-    });
+    setIsLoading(true);
+
+    getAsyncStories()
+      .then(result => {
+        setStories(result.data.stories);
+        setIsLoading(false);
+      })
+      .catch(() => setIsError(true));
   }, []);
 
   const handleSearch = event => {
@@ -82,7 +92,17 @@ const App = () => {
 
       <hr />
 
-      <List list={searchedStories} onRemoveItem={handleRemoveStory} />
+      {isError && <p>Something went wrong...</p>}
+
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+          <List
+            list={searchedStories}
+            onRemoveItem={handleRemoveStory}
+          />
+        )
+      }
     </div>
   );
 }
