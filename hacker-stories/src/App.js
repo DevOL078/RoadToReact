@@ -50,8 +50,10 @@ const App = () => {
         id="search"
         label="Search"
         value={searchTerm}
+        isFocused
         onInputSearch={handleSearch}
       >
+        {/* Use React omposition */}
         <strong>Search: </strong>
       </InputWithLabel>
 
@@ -81,17 +83,33 @@ const InputWithLabel = ({
   value,
   type = "text",
   onInputSearch,
+  isFocused,
+  // for React composition
   children,
-}) => (
+}) => {
+  // Declare ref to input
+  const inputRef = React.useRef();
+
+  // Add side-effect on isFocused
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
     <>
       <label htmlFor={id}>{children}</label>
     &nbsp;
       <input
+        ref={inputRef}
         id={id}
         type={type}
         value={value}
+        autoFocus={isFocused}
         onChange={onInputSearch} />
     </>
   );
+};
 
 export default App;
