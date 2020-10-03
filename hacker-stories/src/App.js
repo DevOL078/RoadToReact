@@ -51,7 +51,9 @@ const App = () => {
         label="Search"
         value={searchTerm}
         onInputSearch={handleSearch}
-      />
+      >
+        <strong>Search: </strong>
+      </InputWithLabel>
 
       <hr />
 
@@ -76,17 +78,17 @@ const Item = ({ item }) => (
 
 const InputWithLabel = ({
   id,
-  label,
   value,
   type = "text",
-  onInputSearch
+  onInputSearch,
+  children,
 }) => (
     <>
-      <label htmlFor={id}>{label}</label>
+      <label htmlFor={id}>{children}</label>
     &nbsp;
       <input
         id={id}
-        type="text"
+        type={type}
         value={value}
         onChange={onInputSearch} />
     </>
